@@ -92,6 +92,6 @@
 
   /* Task Row Utility */
   .task-row {
-    @apply flex items-center gap-4 py-3 px-2 border-b border-ui-border hover:bg-ui-surface-subtle transition-colors group cursor-pointer;
+    @apply flex items-center gap-4 py-3 px-2 border-b border-ui-border hover:bg-ui-surface-subtle transition-colors cursor-pointer;
   }
 }
