@@ -12,7 +12,8 @@ export const MICROSOFT_SCOPES = [
   'email',
   'offline_access',
   'User.Read',
-  'Calendars.Read',
+  'Calendars.ReadWrite',
+  'Tasks.ReadWrite',
 ] as const;
 
 export function createMicrosoftOAuthState(): string {

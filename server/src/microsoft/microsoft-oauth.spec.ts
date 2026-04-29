@@ -36,4 +36,10 @@ describe('microsoft oauth helpers', () => {
     expect(url.searchParams.get('state')).toBe('state-123');
     expect(url.searchParams.get('prompt')).toBe('select_account');
   });
+
+  it('requests read-write Microsoft Calendar and To Do scopes only', () => {
+    expect(MICROSOFT_SCOPES).toContain('Calendars.ReadWrite');
+    expect(MICROSOFT_SCOPES).toContain('Tasks.ReadWrite');
+    expect(MICROSOFT_SCOPES).not.toContain('Calendars.Read');
+  });
 });

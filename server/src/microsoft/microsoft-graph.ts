@@ -1,7 +1,6 @@
 import type {
   MicrosoftCalendarEvent,
   MicrosoftCalendarViewResponse,
-  NormalizedMicrosoftCalendarEvent,
 } from './microsoft-types';
 
 function sleep(ms: number): Promise<void> {
@@ -23,7 +22,7 @@ export async function graphFetch(
   const retryAfterHeader = response.headers.get('retry-after');
   const retryAfterMs = retryAfterHeader
     ? Number(retryAfterHeader) * 1000
-    : Math.min(1000 * 2 ** attempt, 8000);
+    : Math.min(1000 * 2 ** attempt, 4000);
 
   await sleep(retryAfterMs);
 
@@ -86,19 +85,4 @@ export async function listMicrosoftCalendarEvents(input: {
   return events;
 }
 
-export function normalizeMicrosoftCalendarEvent(
-  event: MicrosoftCalendarEvent,
-): NormalizedMicrosoftCalendarEvent {
-  return {
-    id: event.id,
-    title: event.subject ?? '(No title)',
-    bodyPreview: event.bodyPreview,
-    startsAt: event.start.dateTime,
-    endsAt: event.end.dateTime,
-    timezone: event.start.timeZone,
-    isAllDay: event.isAllDay ?? false,
-    showAs: event.showAs,
-    webLink: event.webLink,
-    source: 'microsoft',
-  };
-}
+export { normalizeMicrosoftCalendarEvent } from './microsoft-calendar-events';

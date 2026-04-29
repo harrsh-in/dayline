@@ -1,8 +1,12 @@
 import {
   Controller,
+  Body,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
+  Param,
+  Patch,
   Post,
   Query,
   Req,
@@ -14,6 +18,32 @@ import { MicrosoftCalendarService } from './microsoft-calendar.service';
 
 type SessionRequest = Request & {
   session: Request['session'];
+};
+
+type CalendarEventMutationBody = {
+  subject?: string;
+  body?: string;
+  startDateTime?: string;
+  endDateTime?: string;
+  timezone?: string;
+  location?: string;
+};
+
+type TodoTaskMutationBody = {
+  listId?: string;
+  title?: string;
+  body?: string;
+  status?:
+    | 'notStarted'
+    | 'inProgress'
+    | 'completed'
+    | 'waitingOnOthers'
+    | 'deferred';
+  dueDateTime?: string | null;
+  startDateTime?: string | null;
+  reminderDateTime?: string | null;
+  timezone?: string;
+  importance?: 'low' | 'normal' | 'high';
 };
 
 @Controller('api/integrations/microsoft')
@@ -100,6 +130,194 @@ export class MicrosoftCalendarController {
     }
 
     return result;
+  }
+
+  @Post('events')
+  async createEvent(
+    @Req() req: SessionRequest,
+    @Body() body: CalendarEventMutationBody,
+  ) {
+    if (!body.subject || !body.startDateTime || !body.endDateTime) {
+      throw new HttpException(
+        { error: 'subject_startDateTime_endDateTime_required' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const result = await this.microsoftCalendarService.createEvent({
+      req,
+      subject: body.subject,
+      body: body.body,
+      startDateTime: body.startDateTime,
+      endDateTime: body.endDateTime,
+      timezone: body.timezone,
+      location: body.location,
+    });
+
+    if (!result.connected) {
+      throw new HttpException(result, HttpStatus.UNAUTHORIZED);
+    }
+
+    return {
+      event: result.event,
+    };
+  }
+
+  @Patch('events/:eventId')
+  async updateEvent(
+    @Req() req: SessionRequest,
+    @Param('eventId') eventId: string,
+    @Body() body: CalendarEventMutationBody,
+  ) {
+    const result = await this.microsoftCalendarService.updateEvent({
+      req,
+      eventId,
+      subject: body.subject,
+      body: body.body,
+      startDateTime: body.startDateTime,
+      endDateTime: body.endDateTime,
+      timezone: body.timezone,
+      location: body.location,
+    });
+
+    if (!result.connected) {
+      throw new HttpException(result, HttpStatus.UNAUTHORIZED);
+    }
+
+    return {
+      event: result.event,
+    };
+  }
+
+  @Delete('events/:eventId')
+  async deleteEvent(
+    @Req() req: SessionRequest,
+    @Param('eventId') eventId: string,
+    @Res() res: Response,
+  ): Promise<void> {
+    const result = await this.microsoftCalendarService.deleteEvent({
+      req,
+      eventId,
+    });
+
+    if (!result.connected) {
+      throw new HttpException(result, HttpStatus.UNAUTHORIZED);
+    }
+
+    res.status(204).send();
+  }
+
+  @Get('tasks/lists')
+  async todoTaskLists(@Req() req: SessionRequest) {
+    const result = await this.microsoftCalendarService.getTodoTaskLists(req);
+
+    if (!result.connected) {
+      throw new HttpException(result, HttpStatus.UNAUTHORIZED);
+    }
+
+    return result;
+  }
+
+  @Get('tasks')
+  async todoTasks(
+    @Req() req: SessionRequest,
+    @Query('listId') listId?: string,
+  ) {
+    const result = await this.microsoftCalendarService.getTodoTasks({
+      req,
+      listId,
+    });
+
+    if (!result.connected) {
+      throw new HttpException(result, HttpStatus.UNAUTHORIZED);
+    }
+
+    return result;
+  }
+
+  @Post('tasks')
+  async createTodoTask(
+    @Req() req: SessionRequest,
+    @Body() body: TodoTaskMutationBody,
+  ) {
+    if (!body.title) {
+      throw new HttpException(
+        { error: 'title_required' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const result = await this.microsoftCalendarService.createTodoTask({
+      req,
+      listId: body.listId,
+      title: body.title,
+      body: body.body,
+      dueDateTime: body.dueDateTime ?? undefined,
+      startDateTime: body.startDateTime ?? undefined,
+      reminderDateTime: body.reminderDateTime ?? undefined,
+      timezone: body.timezone,
+      importance: body.importance,
+    });
+
+    if (!result.connected) {
+      throw new HttpException(result, HttpStatus.UNAUTHORIZED);
+    }
+
+    return {
+      listId: result.listId,
+      task: result.task,
+    };
+  }
+
+  @Patch('tasks/:taskId')
+  async updateTodoTask(
+    @Req() req: SessionRequest,
+    @Param('taskId') taskId: string,
+    @Query('listId') listId: string | undefined,
+    @Body() body: TodoTaskMutationBody,
+  ) {
+    const result = await this.microsoftCalendarService.updateTodoTask({
+      req,
+      listId,
+      taskId,
+      title: body.title,
+      body: body.body,
+      status: body.status,
+      dueDateTime: body.dueDateTime,
+      startDateTime: body.startDateTime,
+      reminderDateTime: body.reminderDateTime,
+      timezone: body.timezone,
+      importance: body.importance,
+    });
+
+    if (!result.connected) {
+      throw new HttpException(result, HttpStatus.UNAUTHORIZED);
+    }
+
+    return {
+      listId: result.listId,
+      task: result.task,
+    };
+  }
+
+  @Delete('tasks/:taskId')
+  async deleteTodoTask(
+    @Req() req: SessionRequest,
+    @Param('taskId') taskId: string,
+    @Query('listId') listId: string | undefined,
+    @Res() res: Response,
+  ): Promise<void> {
+    const result = await this.microsoftCalendarService.deleteTodoTask({
+      req,
+      listId,
+      taskId,
+    });
+
+    if (!result.connected) {
+      throw new HttpException(result, HttpStatus.UNAUTHORIZED);
+    }
+
+    res.status(204).send();
   }
 
   @Post('disconnect')

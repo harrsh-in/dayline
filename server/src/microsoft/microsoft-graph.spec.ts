@@ -136,7 +136,7 @@ describe('microsoft graph helpers', () => {
       isAllDay: false,
       showAs: 'busy',
       webLink: 'https://outlook.office.com/event',
-      source: 'microsoft',
+      source: 'microsoft_calendar',
     });
   });
 });

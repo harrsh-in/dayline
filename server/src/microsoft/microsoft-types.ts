@@ -49,5 +49,53 @@ export type NormalizedMicrosoftCalendarEvent = {
   isAllDay: boolean;
   showAs?: string;
   webLink?: string;
-  source: 'microsoft';
+  source: 'microsoft_calendar';
+};
+
+export type MicrosoftTodoTaskList = {
+  id: string;
+  displayName: string;
+  isOwner?: boolean;
+  isShared?: boolean;
+  wellknownListName?:
+    | 'none'
+    | 'defaultList'
+    | 'flaggedEmails'
+    | 'unknownFutureValue';
+};
+
+export type MicrosoftTodoTaskStatus =
+  | 'notStarted'
+  | 'inProgress'
+  | 'completed'
+  | 'waitingOnOthers'
+  | 'deferred';
+
+export type MicrosoftTodoTaskImportance = 'low' | 'normal' | 'high';
+
+export type MicrosoftTodoDateTime = {
+  dateTime: string;
+  timeZone: string;
+};
+
+export type MicrosoftTodoTask = {
+  id: string;
+  title: string;
+  status?: MicrosoftTodoTaskStatus;
+  importance?: MicrosoftTodoTaskImportance;
+  body?: {
+    content?: string;
+    contentType?: 'text' | 'html';
+  };
+  dueDateTime?: MicrosoftTodoDateTime;
+  startDateTime?: MicrosoftTodoDateTime;
+  reminderDateTime?: MicrosoftTodoDateTime;
+  isReminderOn?: boolean;
+  createdDateTime?: string;
+  lastModifiedDateTime?: string;
+};
+
+export type MicrosoftCollectionResponse<T> = {
+  value: T[];
+  '@odata.nextLink'?: string;
 };

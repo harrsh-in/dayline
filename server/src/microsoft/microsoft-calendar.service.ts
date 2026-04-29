@@ -8,9 +8,24 @@ import {
   refreshMicrosoftAccessToken,
 } from './microsoft-oauth';
 import {
-  listMicrosoftCalendarEvents,
+  createMicrosoftCalendarEvent,
+  deleteMicrosoftCalendarEvent,
   normalizeMicrosoftCalendarEvent,
-} from './microsoft-graph';
+  updateMicrosoftCalendarEvent,
+} from './microsoft-calendar-events';
+import { listMicrosoftCalendarEvents } from './microsoft-graph';
+import {
+  createMicrosoftTodoTask,
+  deleteMicrosoftTodoTask,
+  getDefaultMicrosoftTodoListId,
+  listMicrosoftTodoTaskLists,
+  listMicrosoftTodoTasks,
+  updateMicrosoftTodoTask,
+} from './microsoft-todo-tasks';
+import type {
+  MicrosoftTodoTaskImportance,
+  MicrosoftTodoTaskStatus,
+} from './microsoft-types';
 
 type SessionRequest = Request & {
   session: Request['session'];
@@ -111,6 +126,252 @@ export class MicrosoftCalendarService {
     return {
       connected: true as const,
       events: events.map(normalizeMicrosoftCalendarEvent),
+    };
+  }
+
+  async createEvent(input: {
+    req: SessionRequest;
+    subject: string;
+    body?: string;
+    startDateTime: string;
+    endDateTime: string;
+    timezone?: string;
+    location?: string;
+  }) {
+    const accessToken = await this.getValidMicrosoftAccessToken(input.req);
+
+    if (!accessToken) {
+      return {
+        connected: false as const,
+        reauthRequired: true,
+      };
+    }
+
+    const event = await createMicrosoftCalendarEvent({
+      accessToken,
+      subject: input.subject,
+      body: input.body,
+      startDateTime: input.startDateTime,
+      endDateTime: input.endDateTime,
+      timezone: input.timezone ?? 'Asia/Kolkata',
+      location: input.location,
+    });
+
+    return {
+      connected: true as const,
+      event: normalizeMicrosoftCalendarEvent(event),
+    };
+  }
+
+  async updateEvent(input: {
+    req: SessionRequest;
+    eventId: string;
+    subject?: string;
+    body?: string;
+    startDateTime?: string;
+    endDateTime?: string;
+    timezone?: string;
+    location?: string;
+  }) {
+    const accessToken = await this.getValidMicrosoftAccessToken(input.req);
+
+    if (!accessToken) {
+      return {
+        connected: false as const,
+        reauthRequired: true,
+      };
+    }
+
+    const event = await updateMicrosoftCalendarEvent({
+      accessToken,
+      eventId: input.eventId,
+      subject: input.subject,
+      body: input.body,
+      startDateTime: input.startDateTime,
+      endDateTime: input.endDateTime,
+      timezone: input.timezone ?? 'Asia/Kolkata',
+      location: input.location,
+    });
+
+    return {
+      connected: true as const,
+      event: normalizeMicrosoftCalendarEvent(event),
+    };
+  }
+
+  async deleteEvent(input: { req: SessionRequest; eventId: string }) {
+    const accessToken = await this.getValidMicrosoftAccessToken(input.req);
+
+    if (!accessToken) {
+      return {
+        connected: false as const,
+        reauthRequired: true,
+      };
+    }
+
+    await deleteMicrosoftCalendarEvent({
+      accessToken,
+      eventId: input.eventId,
+    });
+
+    return {
+      connected: true as const,
+    };
+  }
+
+  async getTodoTaskLists(req: SessionRequest) {
+    const accessToken = await this.getValidMicrosoftAccessToken(req);
+
+    if (!accessToken) {
+      return {
+        connected: false as const,
+        reauthRequired: true,
+        lists: [],
+      };
+    }
+
+    const lists = await listMicrosoftTodoTaskLists({ accessToken });
+
+    return {
+      connected: true as const,
+      lists,
+      defaultList:
+        lists.find((list) => list.wellknownListName === 'defaultList') ?? null,
+    };
+  }
+
+  async getTodoTasks(input: { req: SessionRequest; listId?: string }) {
+    const accessToken = await this.getValidMicrosoftAccessToken(input.req);
+
+    if (!accessToken) {
+      return {
+        connected: false as const,
+        reauthRequired: true,
+        tasks: [],
+      };
+    }
+
+    const listId =
+      input.listId ?? (await getDefaultMicrosoftTodoListId({ accessToken }));
+    const tasks = await listMicrosoftTodoTasks({ accessToken, listId });
+
+    return {
+      connected: true as const,
+      listId,
+      tasks,
+    };
+  }
+
+  async createTodoTask(input: {
+    req: SessionRequest;
+    listId?: string;
+    title: string;
+    body?: string;
+    dueDateTime?: string;
+    startDateTime?: string;
+    reminderDateTime?: string;
+    timezone?: string;
+    importance?: MicrosoftTodoTaskImportance;
+  }) {
+    const accessToken = await this.getValidMicrosoftAccessToken(input.req);
+
+    if (!accessToken) {
+      return {
+        connected: false as const,
+        reauthRequired: true,
+      };
+    }
+
+    const listId =
+      input.listId ?? (await getDefaultMicrosoftTodoListId({ accessToken }));
+    const task = await createMicrosoftTodoTask({
+      accessToken,
+      listId,
+      title: input.title,
+      body: input.body,
+      dueDateTime: input.dueDateTime,
+      startDateTime: input.startDateTime,
+      reminderDateTime: input.reminderDateTime,
+      timezone: input.timezone ?? 'Asia/Kolkata',
+      importance: input.importance,
+    });
+
+    return {
+      connected: true as const,
+      listId,
+      task,
+    };
+  }
+
+  async updateTodoTask(input: {
+    req: SessionRequest;
+    listId?: string;
+    taskId: string;
+    title?: string;
+    body?: string;
+    status?: MicrosoftTodoTaskStatus;
+    dueDateTime?: string | null;
+    startDateTime?: string | null;
+    reminderDateTime?: string | null;
+    timezone?: string;
+    importance?: MicrosoftTodoTaskImportance;
+  }) {
+    const accessToken = await this.getValidMicrosoftAccessToken(input.req);
+
+    if (!accessToken) {
+      return {
+        connected: false as const,
+        reauthRequired: true,
+      };
+    }
+
+    const listId =
+      input.listId ?? (await getDefaultMicrosoftTodoListId({ accessToken }));
+    const task = await updateMicrosoftTodoTask({
+      accessToken,
+      listId,
+      taskId: input.taskId,
+      title: input.title,
+      body: input.body,
+      status: input.status,
+      dueDateTime: input.dueDateTime,
+      startDateTime: input.startDateTime,
+      reminderDateTime: input.reminderDateTime,
+      timezone: input.timezone ?? 'Asia/Kolkata',
+      importance: input.importance,
+    });
+
+    return {
+      connected: true as const,
+      listId,
+      task,
+    };
+  }
+
+  async deleteTodoTask(input: {
+    req: SessionRequest;
+    listId?: string;
+    taskId: string;
+  }) {
+    const accessToken = await this.getValidMicrosoftAccessToken(input.req);
+
+    if (!accessToken) {
+      return {
+        connected: false as const,
+        reauthRequired: true,
+      };
+    }
+
+    const listId =
+      input.listId ?? (await getDefaultMicrosoftTodoListId({ accessToken }));
+    await deleteMicrosoftTodoTask({
+      accessToken,
+      listId,
+      taskId: input.taskId,
+    });
+
+    return {
+      connected: true as const,
     };
   }
 
