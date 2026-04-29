@@ -1,205 +1,99 @@
-# Dayline Agent Operating Contract
+# Dayline — Agent Operating Contract
 
-This file is the root instruction set for Codex, Claude, and any other agentic coding assistant working in this repository.
+Single source of truth for Claude Code, Codex, OpenCode, and any agentic coding assistant.
 
-Dayline is a calm daily planning product. The codebase must protect that product shape: tasks, habits, events, and connected calendars should help the user understand their day without turning the app into a heavy productivity operating system.
+## Project
 
-## Required Reading Before Any Code Change
+Dayline: minimal daily planning app — tasks, habits, events, calendar sync (Google + Microsoft).  
+Stack: `admin-panel/` (React 19 / Vite / TS / TanStack Router / Tailwind 4 / Lucide) + `server/` (NestJS / TS).
 
-Before modifying code, read these files in this order:
+## Context Before Any Change
 
-1. `README.md` — product overview and scope.
-2. `AGENTS.md` — root product guidance and agent rules.
-3. `docs/DESIGN_CONTRACT.md` — visual and engineering contract.
-4. `docs/ai/SEMANTIC_CODE_STANDARD.md` — naming, structure, and domain language.
-5. One of:
-   - `docs/ai/FRONTEND_RULES.md` for changes under `admin-panel/`.
-   - `docs/ai/BACKEND_RULES.md` for changes under `server/`.
-6. `docs/ai/API_CONTRACT_RULES.md` for frontend/backend boundary changes.
-7. `docs/ai/CALENDAR_SYNC_RULES.md` for Google/Microsoft calendar changes.
+If Serena MCP is available, query memories `project_overview`, `code_style`, `task_completion` first — they summarize the rules and save file reads.
 
-If a file is missing, do not invent its contents. Inspect the current repository and proceed with the closest available contract.
+Read `docs/ai/` files only for the domain the task actually touches:
 
-## Product Guardrails
+- Frontend (`admin-panel/`) → `docs/ai/FRONTEND_RULES.md`
+- Backend (`server/`) → `docs/ai/BACKEND_RULES.md`
+- Frontend↔backend boundary → `docs/ai/API_CONTRACT_RULES.md`
+- Calendar / OAuth → `docs/ai/CALENDAR_SYNC_RULES.md`
+- Naming / domain model → `docs/ai/SEMANTIC_CODE_STANDARD.md`
+- Writing or modifying tests → `docs/ai/TESTING_RULES.md`
+- Auth / OAuth / sessions / secrets / tokens → `docs/ai/SECURITY_RULES.md`
+- Modifying `package.json` scripts → `docs/ai/PACKAGE_SCRIPT_RECOMMENDATIONS.md`
+- Finishing any non-trivial change → `docs/ai/REVIEW_CHECKLIST.md`
 
-Dayline is not Jira, Notion, Linear, a CRM, or a team collaboration suite. Do not add project-management concepts unless explicitly requested.
+Do not read all files for every task. Read only what the task domain requires.
 
-Every change must pass this product test:
+## Product Rules
 
-- Does it make the user's day clearer?
-- Does it keep tasks, habits, events, and calendars understandable together?
-- Does it preserve a minimal, calm UX?
-- Does it avoid turning planning into another task?
-- Can a first-time user understand the behavior without documentation?
+Dayline is not Jira, Notion, Linear, or a team suite. Protect that shape.
 
-If the answer is weak, implement the smaller simpler version or stop and explain the concern.
+Every change must pass all four:
 
-## Implementation Principles
+- Makes the user's day clearer?
+- Keeps tasks, habits, events, and calendars understandable together?
+- Preserves minimal, calm UX?
+- Can a first-time user understand it without documentation?
 
-Write semantic code. Names should describe domain intent, not implementation mechanics.
+If the answer is weak, implement the smaller version or stop and explain the concern.
 
-Prefer names like:
+## Domain Vocabulary
 
-- `Task`
-- `Habit`
-- `PlannerEvent`
-- `CalendarConnection`
-- `CalendarAccount`
-- `ExternalCalendarEvent`
-- `RecurringRule`
-- `TodayTimelineItem`
+`Task` · `Habit` · `PlannerEvent` · `ExternalCalendarEvent` · `CalendarConnection` · `CalendarAccount`  
+`CalendarSource` (`dayline` | `google` | `microsoft`) · `RecurringRule` · `TodayTimelineItem` · `UpcomingTimelineItem`
 
-Avoid names like:
+## Code Rules
 
-- `Data`
-- `Item`
-- `Thing`
-- `Obj`
-- `Handler`
-- `Manager`
-- `Helper`
-- `Utils`
-- `Temp`
-- `NewComponent`
+- Explicit TypeScript types everywhere. No implicit `any`.
+- Names must describe domain intent, not implementation mechanics.
+- Avoid: `Data`, `Item`, `Helper`, `Manager`, `Utils`, `Handler`, `Temp`, `NewComponent`.
+- Small modules. Thin controllers. Clear DTO boundaries.
+- No comments unless the WHY is non-obvious (hidden constraint, subtle invariant, workaround).
+- No new dependencies without justification. No unrelated refactors.
 
-Implementation must be explicit, typed, and boring. Do not hide complexity inside vague abstractions.
+## Frontend (`admin-panel/`)
 
-## Agent Workflow
+- React functional components. TanStack Router — route files stay thin.
+- Tailwind 4 semantic tokens from `src/styles.css` only. No arbitrary colors. No other icon library than Lucide React.
+- Typed API layer under `src/api/`. No raw `fetch()` scattered in components.
+- Explicit UI states: `idle` · `loading` · `success` · `empty` · `error`. Do not overload `null`.
+- No OAuth tokens, refresh tokens, authorization codes, or provider secrets in browser storage.
 
-For every non-trivial task:
+## Backend (`server/`)
 
-1. Inspect existing code before editing.
-2. Identify the smallest correct change.
-3. Preserve current architecture unless it is clearly broken.
-4. Avoid unrelated refactors.
-5. Avoid new dependencies unless they remove real complexity and are approved by the task.
-6. Keep frontend and backend contracts aligned.
-7. Run the relevant checks when possible.
-8. Report exactly what changed and what could not be verified.
+- NestJS module / service / controller boundaries. Controllers stay thin — parse, call service, return DTO.
+- Provider-specific calendar code stays behind adapters and normalizers. The rest of the backend uses normalized Dayline types.
+- Explicit request/response DTOs. Never return tokens, secrets, or raw provider payloads.
+- API prefix: `/api/v1`. Resource-oriented route names.
+- Session-backed flows are acceptable (`express-session` is available). Do not store OAuth credentials in session if they must survive browser restart.
 
-Do not modify generated files unless the project workflow requires it. If a router tree, build artifact, or generated type file exists, update it through the appropriate script when available.
+## Security
+
+- Calendar tokens are backend-owned. Never expose to the frontend.
+- No secrets, `.env` values, or provider credentials in browser storage or committed files.
+- Disconnect flows must invalidate or delete backend-owned provider credentials.
 
 ## Scope Discipline
 
-Do not expand scope silently.
+Inspect existing code before editing. Make the smallest correct change. Preserve current architecture unless it is clearly broken.
 
-If asked to add calendar event creation, do not also add reminders, tagging, color systems, analytics, sharing, templates, or import/export unless explicitly requested.
+Do not add features, refactor unrelated code, or introduce dependencies beyond what the task explicitly requires.
 
-If asked to improve a screen, do not rewrite the entire app shell unless the change requires it.
-
-If asked to fix a backend route, do not introduce a new persistence layer, auth system, or service boundary unless the route cannot be made correct without it.
-
-## Frontend Rules Summary
-
-The frontend lives in `admin-panel/` and uses React, Vite, TypeScript, TanStack Router, Tailwind CSS 4, and Lucide icons.
-
-Follow `docs/ai/FRONTEND_RULES.md`.
-
-Key constraints:
-
-- Route files should stay thin.
-- Components should be small and semantic.
-- Styling must use existing semantic tokens from `admin-panel/src/styles.css`.
-- Use Lucide React for icons.
-- Do not use arbitrary decorative colors.
-- Do not store OAuth tokens, refresh tokens, access tokens, provider secrets, or calendar write identifiers in browser storage.
-- Use browser storage only for safe UI preferences when needed.
-
-## Backend Rules Summary
-
-The backend lives in `server/` and uses NestJS.
-
-Follow `docs/ai/BACKEND_RULES.md`.
-
-Key constraints:
-
-- Keep controllers thin.
-- Put business logic in services.
-- Keep provider-specific calendar logic behind provider adapters.
-- Never expose provider tokens to the frontend.
-- Do not leak Microsoft/Google implementation details into generic Dayline APIs.
-- Use clear DTO boundaries.
-- Prefer explicit error handling over silent fallbacks.
-
-## API Boundary Rules
-
-Frontend models and backend models are not automatically the same thing.
-
-Use explicit API response shapes. Calendar provider objects should be normalized before they reach the frontend.
-
-The frontend should not need to know raw Microsoft Graph or Google Calendar payload structures except inside explicitly isolated debugging tools, and those should not be part of normal product UX.
-
-## Design Contract
-
-Dayline uses a modern monochrome aesthetic. The UI should be content-first, high-contrast, restrained, and surgical with color.
-
-Do not introduce:
-
-- Loud gradients.
-- Overdesigned cards.
-- Heavy borders.
-- Dashboard clutter.
-- Random color palettes.
-- Decorative illustrations that compete with planning content.
-- Gamified productivity patterns unless explicitly requested.
-
-## Testing and Verification
-
-Use the scripts already present in each package.
-
-Frontend:
+## Verification
 
 ```bash
-cd admin-panel
-npm run lint
-npm run test
-npm run build
-npm run check
+# Frontend
+cd admin-panel && npm run lint && npm run test && npm run build
+
+# Backend
+cd server && npm run lint && npm run test && npm run build
 ```
 
-Backend:
-
-```bash
-cd server
-npm run lint
-npm run test
-npm run build
-```
-
-Run the narrowest useful command first while developing. Before finalizing a larger change, run the full relevant set when feasible.
-
+Run the narrowest useful command first during development. Run the full set before finalizing any change.  
 If a command cannot be run, say why. Do not claim verification that did not happen.
 
-## Dependency Policy
+## Finish Every Task With
 
-Do not add a dependency for code that can be written clearly in a few lines.
-
-A new dependency is acceptable only when it is:
-
-- Actively maintained.
-- Commonly used in production.
-- Compatible with the current stack.
-- Smaller than the complexity it removes.
-- Justified in the final response.
-
-Do not add UI libraries beyond the current Tailwind/Lucide direction unless explicitly approved.
-
-## Security Rules
-
-Never commit secrets, tokens, `.env` values, client secrets, OAuth refresh tokens, private keys, or real provider credentials.
-
-Calendar tokens must be backend-owned. The browser may hold session state and safe UI preferences, not provider credentials.
-
-Disconnect flows must invalidate or delete backend-owned provider credentials and make reconnect behavior predictable.
-
-## Final Response Requirements for Agents
-
-When finishing a coding task, report:
-
-- Files changed.
-- Behavior changed.
-- Checks run.
-- Checks not run, with the reason.
-- Any risk or follow-up that actually matters.
-
-Do not produce vague summaries like “made improvements.” Name the concrete change.
+Files changed · Behavior changed · Checks run · Checks not run (reason) · Any real risk or follow-up  
+Do not produce vague summaries. Name the concrete change.
