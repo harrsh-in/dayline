@@ -125,6 +125,8 @@ describe('microsoft graph helpers', () => {
         isAllDay: undefined,
         showAs: 'busy',
         webLink: 'https://outlook.office.com/event',
+        createdDateTime: undefined,
+        lastModifiedDateTime: undefined,
       }),
     ).toEqual({
       id: 'event-1',

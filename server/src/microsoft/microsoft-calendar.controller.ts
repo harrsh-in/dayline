@@ -21,29 +21,30 @@ type SessionRequest = Request & {
 };
 
 type CalendarEventMutationBody = {
-  subject?: string;
-  body?: string;
-  startDateTime?: string;
-  endDateTime?: string;
-  timezone?: string;
-  location?: string;
+  subject: string | undefined;
+  body: string | undefined;
+  startDateTime: string | undefined;
+  endDateTime: string | undefined;
+  timezone: string | undefined;
+  location: string | undefined;
 };
 
 type TodoTaskMutationBody = {
-  listId?: string;
-  title?: string;
-  body?: string;
-  status?:
+  listId: string | undefined;
+  title: string | undefined;
+  body: string | undefined;
+  status:
     | 'notStarted'
     | 'inProgress'
     | 'completed'
     | 'waitingOnOthers'
-    | 'deferred';
-  dueDateTime?: string | null;
-  startDateTime?: string | null;
-  reminderDateTime?: string | null;
-  timezone?: string;
-  importance?: 'low' | 'normal' | 'high';
+    | 'deferred'
+    | undefined;
+  dueDateTime: string | null | undefined;
+  startDateTime: string | null | undefined;
+  reminderDateTime: string | null | undefined;
+  timezone: string | undefined;
+  importance: 'low' | 'normal' | 'high' | undefined;
 };
 
 @Controller('api/integrations/microsoft')

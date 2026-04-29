@@ -5,9 +5,11 @@ import {
   deleteMicrosoftTodoTask,
   listMicrosoftTodoLists,
   listMicrosoftTodoTasks,
-  type MicrosoftTodoTask,
-  type MicrosoftTodoTaskList,
   updateMicrosoftTodoTask,
+} from './microsoftTodoApi'
+import type {
+  MicrosoftTodoTask,
+  MicrosoftTodoTaskList,
 } from './microsoftTodoApi'
 import {
   getMicrosoftMapping,
@@ -109,6 +111,9 @@ export function MicrosoftTodoCrudPanel(props: {
         body: form.body || undefined,
         dueDateTime: form.dueDateTime || undefined,
         timezone: 'Asia/Kolkata',
+        importance: undefined,
+        reminderDateTime: undefined,
+        startDateTime: undefined,
       })
 
       if (form.localItemId) {
@@ -145,10 +150,11 @@ export function MicrosoftTodoCrudPanel(props: {
         listId,
         taskId,
         patch: {
-          title: form.title || undefined,
-          body: form.body || undefined,
-          dueDateTime: form.dueDateTime || undefined,
+          title: form.title,
+          body: form.body,
+          dueDateTime: form.dueDateTime,
           timezone: 'Asia/Kolkata',
+          status: undefined,
         },
       })
       setStatus('Task updated.')

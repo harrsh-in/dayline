@@ -15,11 +15,11 @@ export type MicrosoftCalendarEvent = {
 
 export type MicrosoftCalendarEventInput = {
   subject: string
-  body?: string
+  body: string | undefined
   startDateTime: string
   endDateTime: string
-  timezone?: string
-  location?: string
+  timezone: string | undefined
+  location: string | undefined
 }
 
 export async function createMicrosoftCalendarEvent(

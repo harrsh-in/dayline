@@ -8,14 +8,14 @@ export type MicrosoftTodoTaskStatus =
   | 'deferred'
 
 export type MicrosoftTodoTaskInput = {
-  listId?: string
+  listId: string | undefined
   title: string
-  body?: string
-  dueDateTime?: string
-  startDateTime?: string
-  reminderDateTime?: string
-  timezone?: string
-  importance?: 'low' | 'normal' | 'high'
+  body: string | undefined
+  dueDateTime: string | undefined
+  startDateTime: string | undefined
+  reminderDateTime: string | undefined
+  timezone: string | undefined
+  importance: 'low' | 'normal' | 'high' | undefined
 }
 
 export type MicrosoftTodoTask = {
@@ -107,7 +107,7 @@ export async function updateMicrosoftTodoTask(input: {
   listId: string
   taskId: string
   patch: Partial<MicrosoftTodoTaskInput> & {
-    status?: MicrosoftTodoTaskStatus
+    status: MicrosoftTodoTaskStatus | undefined
   }
 }) {
   const response = await fetch(

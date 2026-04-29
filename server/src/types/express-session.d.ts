@@ -2,17 +2,19 @@ import 'express-session';
 
 declare module 'express-session' {
   interface SessionData {
-    microsoftOAuthState?: string;
-    microsoftCalendar?: {
-      connected: true;
-      accessToken: string;
-      refreshToken?: string;
-      expiresAt: number;
-      account: {
-        id: string;
-        displayName?: string;
-        email?: string;
-      };
-    };
+    microsoftOAuthState: string | undefined;
+    microsoftCalendar:
+      | {
+          connected: true;
+          accessToken: string;
+          refreshToken: string | undefined;
+          expiresAt: number;
+          account: {
+            id: string;
+            displayName: string | undefined;
+            email: string | undefined;
+          };
+        }
+      | undefined;
   }
 }

@@ -101,9 +101,9 @@ export class MicrosoftCalendarService {
 
   async getEvents(input: {
     req: SessionRequest;
-    from?: string;
-    to?: string;
-    timezone?: string;
+    from: string | undefined;
+    to: string | undefined;
+    timezone: string | undefined;
   }) {
     const accessToken = await this.getValidMicrosoftAccessToken(input.req);
 
@@ -132,11 +132,11 @@ export class MicrosoftCalendarService {
   async createEvent(input: {
     req: SessionRequest;
     subject: string;
-    body?: string;
+    body: string | undefined;
     startDateTime: string;
     endDateTime: string;
-    timezone?: string;
-    location?: string;
+    timezone: string | undefined;
+    location: string | undefined;
   }) {
     const accessToken = await this.getValidMicrosoftAccessToken(input.req);
 
@@ -166,12 +166,12 @@ export class MicrosoftCalendarService {
   async updateEvent(input: {
     req: SessionRequest;
     eventId: string;
-    subject?: string;
-    body?: string;
-    startDateTime?: string;
-    endDateTime?: string;
-    timezone?: string;
-    location?: string;
+    subject: string | undefined;
+    body: string | undefined;
+    startDateTime: string | undefined;
+    endDateTime: string | undefined;
+    timezone: string | undefined;
+    location: string | undefined;
   }) {
     const accessToken = await this.getValidMicrosoftAccessToken(input.req);
 
@@ -240,7 +240,10 @@ export class MicrosoftCalendarService {
     };
   }
 
-  async getTodoTasks(input: { req: SessionRequest; listId?: string }) {
+  async getTodoTasks(input: {
+    req: SessionRequest;
+    listId: string | undefined;
+  }) {
     const accessToken = await this.getValidMicrosoftAccessToken(input.req);
 
     if (!accessToken) {
@@ -264,14 +267,14 @@ export class MicrosoftCalendarService {
 
   async createTodoTask(input: {
     req: SessionRequest;
-    listId?: string;
+    listId: string | undefined;
     title: string;
-    body?: string;
-    dueDateTime?: string;
-    startDateTime?: string;
-    reminderDateTime?: string;
-    timezone?: string;
-    importance?: MicrosoftTodoTaskImportance;
+    body: string | undefined;
+    dueDateTime: string | undefined;
+    startDateTime: string | undefined;
+    reminderDateTime: string | undefined;
+    timezone: string | undefined;
+    importance: MicrosoftTodoTaskImportance | undefined;
   }) {
     const accessToken = await this.getValidMicrosoftAccessToken(input.req);
 
@@ -305,16 +308,16 @@ export class MicrosoftCalendarService {
 
   async updateTodoTask(input: {
     req: SessionRequest;
-    listId?: string;
+    listId: string | undefined;
     taskId: string;
-    title?: string;
-    body?: string;
-    status?: MicrosoftTodoTaskStatus;
-    dueDateTime?: string | null;
-    startDateTime?: string | null;
-    reminderDateTime?: string | null;
-    timezone?: string;
-    importance?: MicrosoftTodoTaskImportance;
+    title: string | undefined;
+    body: string | undefined;
+    status: MicrosoftTodoTaskStatus | undefined;
+    dueDateTime: string | null | undefined;
+    startDateTime: string | null | undefined;
+    reminderDateTime: string | null | undefined;
+    timezone: string | undefined;
+    importance: MicrosoftTodoTaskImportance | undefined;
   }) {
     const accessToken = await this.getValidMicrosoftAccessToken(input.req);
 
@@ -350,7 +353,7 @@ export class MicrosoftCalendarService {
 
   async deleteTodoTask(input: {
     req: SessionRequest;
-    listId?: string;
+    listId: string | undefined;
     taskId: string;
   }) {
     const accessToken = await this.getValidMicrosoftAccessToken(input.req);

@@ -77,12 +77,12 @@ export async function createMicrosoftTodoTask(input: {
   accessToken: string;
   listId: string;
   title: string;
-  body?: string;
-  dueDateTime?: string;
-  startDateTime?: string;
-  reminderDateTime?: string;
-  timezone?: string;
-  importance?: MicrosoftTodoTaskImportance;
+  body: string | undefined;
+  dueDateTime: string | undefined;
+  startDateTime: string | undefined;
+  reminderDateTime: string | undefined;
+  timezone: string | undefined;
+  importance: MicrosoftTodoTaskImportance | undefined;
 }): Promise<MicrosoftTodoTask> {
   const timezone = input.timezone ?? 'Asia/Kolkata';
   const payload: Record<string, unknown> = {
@@ -148,14 +148,14 @@ export async function updateMicrosoftTodoTask(input: {
   accessToken: string;
   listId: string;
   taskId: string;
-  title?: string;
-  body?: string;
-  status?: MicrosoftTodoTaskStatus;
-  dueDateTime?: string | null;
-  startDateTime?: string | null;
-  reminderDateTime?: string | null;
-  timezone?: string;
-  importance?: MicrosoftTodoTaskImportance;
+  title: string | undefined;
+  body: string | undefined;
+  status: MicrosoftTodoTaskStatus | undefined;
+  dueDateTime: string | null | undefined;
+  startDateTime: string | null | undefined;
+  reminderDateTime: string | null | undefined;
+  timezone: string | undefined;
+  importance: MicrosoftTodoTaskImportance | undefined;
 }): Promise<MicrosoftTodoTask> {
   const timezone = input.timezone ?? 'Asia/Kolkata';
   const payload: Record<string, unknown> = {};

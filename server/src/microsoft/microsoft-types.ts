@@ -10,15 +10,15 @@ export type MicrosoftTokenResponse = {
 
 export type MicrosoftMeResponse = {
   id: string;
-  displayName?: string;
-  mail?: string;
-  userPrincipalName?: string;
+  displayName: string | undefined;
+  mail: string | undefined;
+  userPrincipalName: string | undefined;
 };
 
 export type MicrosoftCalendarEvent = {
   id: string;
-  subject?: string;
-  bodyPreview?: string;
+  subject: string | undefined;
+  bodyPreview: string | undefined;
   start: {
     dateTime: string;
     timeZone: string;
@@ -27,41 +27,42 @@ export type MicrosoftCalendarEvent = {
     dateTime: string;
     timeZone: string;
   };
-  isAllDay?: boolean;
-  showAs?: string;
-  webLink?: string;
-  createdDateTime?: string;
-  lastModifiedDateTime?: string;
+  isAllDay: boolean | undefined;
+  showAs: string | undefined;
+  webLink: string | undefined;
+  createdDateTime: string | undefined;
+  lastModifiedDateTime: string | undefined;
 };
 
 export type MicrosoftCalendarViewResponse = {
   value: MicrosoftCalendarEvent[];
-  '@odata.nextLink'?: string;
+  '@odata.nextLink': string | undefined;
 };
 
 export type NormalizedMicrosoftCalendarEvent = {
   id: string;
   title: string;
-  bodyPreview?: string;
+  bodyPreview: string | undefined;
   startsAt: string;
   endsAt: string;
   timezone: string;
   isAllDay: boolean;
-  showAs?: string;
-  webLink?: string;
+  showAs: string | undefined;
+  webLink: string | undefined;
   source: 'microsoft_calendar';
 };
 
 export type MicrosoftTodoTaskList = {
   id: string;
   displayName: string;
-  isOwner?: boolean;
-  isShared?: boolean;
-  wellknownListName?:
+  isOwner: boolean | undefined;
+  isShared: boolean | undefined;
+  wellknownListName:
     | 'none'
     | 'defaultList'
     | 'flaggedEmails'
-    | 'unknownFutureValue';
+    | 'unknownFutureValue'
+    | undefined;
 };
 
 export type MicrosoftTodoTaskStatus =
@@ -81,21 +82,23 @@ export type MicrosoftTodoDateTime = {
 export type MicrosoftTodoTask = {
   id: string;
   title: string;
-  status?: MicrosoftTodoTaskStatus;
-  importance?: MicrosoftTodoTaskImportance;
-  body?: {
-    content?: string;
-    contentType?: 'text' | 'html';
-  };
-  dueDateTime?: MicrosoftTodoDateTime;
-  startDateTime?: MicrosoftTodoDateTime;
-  reminderDateTime?: MicrosoftTodoDateTime;
-  isReminderOn?: boolean;
-  createdDateTime?: string;
-  lastModifiedDateTime?: string;
+  status: MicrosoftTodoTaskStatus | undefined;
+  importance: MicrosoftTodoTaskImportance | undefined;
+  body:
+    | {
+        content: string | undefined;
+        contentType: 'text' | 'html' | undefined;
+      }
+    | undefined;
+  dueDateTime: MicrosoftTodoDateTime | undefined;
+  startDateTime: MicrosoftTodoDateTime | undefined;
+  reminderDateTime: MicrosoftTodoDateTime | undefined;
+  isReminderOn: boolean | undefined;
+  createdDateTime: string | undefined;
+  lastModifiedDateTime: string | undefined;
 };
 
 export type MicrosoftCollectionResponse<T> = {
   value: T[];
-  '@odata.nextLink'?: string;
+  '@odata.nextLink': string | undefined;
 };

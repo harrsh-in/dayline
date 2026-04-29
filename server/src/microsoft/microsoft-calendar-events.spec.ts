@@ -95,6 +95,8 @@ describe('microsoft calendar event mutations', () => {
       startDateTime: '2026-05-02T16:00:00',
       endDateTime: '2026-05-02T16:30:00',
       timezone: 'Asia/Kolkata',
+      location: undefined,
+      body: undefined,
     });
 
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
@@ -143,6 +145,11 @@ describe('microsoft calendar event mutations', () => {
           dateTime: '2026-05-02T15:30:00',
           timeZone: 'Asia/Kolkata',
         },
+        createdDateTime: undefined,
+        lastModifiedDateTime: undefined,
+        isAllDay: undefined,
+        showAs: undefined,
+        webLink: undefined,
       }),
     ).toEqual({
       id: 'event-1',

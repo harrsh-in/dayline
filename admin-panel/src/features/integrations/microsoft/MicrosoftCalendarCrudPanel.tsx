@@ -1,11 +1,11 @@
-import { useState } from 'react'
 import { Check, Pencil, RefreshCcw, Trash2 } from 'lucide-react'
+import { useState } from 'react'
 import {
   createMicrosoftCalendarEvent,
   deleteMicrosoftCalendarEvent,
-  type MicrosoftCalendarEvent,
   updateMicrosoftCalendarEvent,
 } from './microsoftCalendarApi'
+import type { MicrosoftCalendarEvent } from './microsoftCalendarApi'
 import {
   getMicrosoftMapping,
   removeMicrosoftMapping,
@@ -104,12 +104,12 @@ export function MicrosoftCalendarCrudPanel(props: {
 
     try {
       await updateMicrosoftCalendarEvent(eventId, {
-        subject: form.subject || undefined,
-        body: form.body || undefined,
-        startDateTime: form.startDateTime || undefined,
-        endDateTime: form.endDateTime || undefined,
+        subject: form.subject,
+        body: form.body,
+        startDateTime: form.startDateTime,
+        endDateTime: form.endDateTime,
         timezone: 'Asia/Kolkata',
-        location: form.location || undefined,
+        location: form.location,
       })
 
       if (form.localItemId) {

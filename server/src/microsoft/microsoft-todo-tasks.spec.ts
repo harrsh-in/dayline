@@ -80,6 +80,7 @@ describe('microsoft to do task helpers', () => {
       reminderDateTime: '2026-05-02T14:30:00',
       timezone: 'Asia/Kolkata',
       importance: 'high',
+      startDateTime: undefined,
     });
 
     const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
@@ -122,6 +123,11 @@ describe('microsoft to do task helpers', () => {
       status: 'completed',
       dueDateTime: null,
       reminderDateTime: null,
+      body: undefined,
+      startDateTime: undefined,
+      timezone: undefined,
+      importance: undefined,
+      title: undefined,
     });
 
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];

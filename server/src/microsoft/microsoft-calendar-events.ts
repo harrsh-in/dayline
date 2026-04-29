@@ -24,11 +24,11 @@ export function normalizeMicrosoftCalendarEvent(
 export async function createMicrosoftCalendarEvent(input: {
   accessToken: string;
   subject: string;
-  body?: string;
+  body: string | undefined;
   startDateTime: string;
   endDateTime: string;
   timezone: string;
-  location?: string;
+  location: string | undefined;
 }): Promise<MicrosoftCalendarEvent> {
   const payload = {
     subject: input.subject,
@@ -78,12 +78,12 @@ export async function createMicrosoftCalendarEvent(input: {
 export async function updateMicrosoftCalendarEvent(input: {
   accessToken: string;
   eventId: string;
-  subject?: string;
-  body?: string;
-  startDateTime?: string;
-  endDateTime?: string;
-  timezone?: string;
-  location?: string;
+  subject: string | undefined;
+  body: string | undefined;
+  startDateTime: string | undefined;
+  endDateTime: string | undefined;
+  timezone: string | undefined;
+  location: string | undefined;
 }): Promise<MicrosoftCalendarEvent> {
   const payload: Record<string, unknown> = {};
 

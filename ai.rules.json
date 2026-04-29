@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "project": "Dayline",
+  "productPromise": "Help users see what they need to do, when they need to do it, without making planning feel like another task.",
+  "primaryDomains": ["tasks", "habits", "planner-events", "calendar-connections", "external-calendar-events"],
+  "forbiddenProductDirections": [
+    "project-management-suite",
+    "team-collaboration-platform-v1",
+    "crm",
+    "notion-replacement",
+    "jira-replacement",
+    "dashboard-heavy-productivity-os"
+  ],
+  "frontend": {
+    "root": "admin-panel",
+    "stack": ["React 19", "Vite", "TypeScript", "TanStack Router", "Tailwind CSS 4", "Lucide React", "Vitest"],
+    "rules": [
+      "Keep route files thin",
+      "Use semantic component names",
+      "Centralize typed API calls",
+      "Use Tailwind semantic tokens",
+      "Do not store OAuth tokens or provider secrets in browser storage",
+      "Make calendar source explicit in UI"
+    ]
+  },
+  "backend": {
+    "root": "server",
+    "stack": ["NestJS", "TypeScript", "Jest", "Express platform"],
+    "rules": [
+      "Keep controllers thin",
+      "Put use-case logic in services",
+      "Keep provider logic behind adapters",
+      "Normalize provider payloads before frontend responses",
+      "Never return tokens or secrets",
+      "Use explicit request and response DTOs"
+    ]
+  },
+  "checks": {
+    "frontend": ["npm run lint", "npm run test", "npm run build", "npm run check"],
+    "backend": ["npm run lint", "npm run test", "npm run build"]
+  }
+}
