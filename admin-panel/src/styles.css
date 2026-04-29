@@ -1,21 +1,21 @@
 @import 'tailwindcss';
 
 @theme {
-  /* 
-    Modern Monochrome Identity 
+  /*
+    Modern Monochrome Identity
     Pure, high-contrast palette. Content provides the color.
   */
   --color-brand-primary: #000000;
   --color-brand-secondary: #27272a;
 
-  /* 
+  /*
     Semantic UI Colors
     Using Zinc (neutral) for a clean, architectural feel.
   */
   --color-ui-surface: #ffffff;
   --color-ui-surface-hover: #f4f4f5;
   --color-ui-surface-subtle: #fafafa;
-  
+
   --color-ui-border: #e4e4e7;
   --color-ui-border-strong: #18181b;
 
@@ -23,16 +23,17 @@
   --color-ui-text-muted: #71717a;
   --color-ui-text-dimmed: #a1a1aa;
 
-  /* 
+  /*
     Status Colors (Surgical use of color only where functional)
   */
   --color-status-success: #10b981; /* Emerald-500 */
-  --color-status-error: #ef4444;   /* Red-500 */
-  --color-status-info: #3b82f6;    /* Blue-500 */
+  --color-status-error: #ef4444; /* Red-500 */
+  --color-status-info: #3b82f6; /* Blue-500 */
 
   /* Typography */
-  --font-sans: 'Inter Variable', 'Inter', 'system-ui', '-apple-system', sans-serif;
-  
+  --font-sans:
+    'Inter Variable', 'Inter', 'system-ui', '-apple-system', sans-serif;
+
   /* Radius - Sharp & Precise */
   --radius-xs: 0px;
   --radius-sm: 2px;
@@ -40,10 +41,11 @@
   --radius-lg: 8px;
 
   /* Shadows - Minimal to none */
-  --shadow-subtle: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-subtle:
+    0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
 }
 
-/* 
+/*
   Global Base Styles
 */
 @layer base {
@@ -69,7 +71,7 @@
   }
 }
 
-/* 
+/*
   Component-level Utilities (The "Senior" way to handle repeated patterns)
   We use Tailwind @apply to keep our JSX clean but still utility-driven.
 */
